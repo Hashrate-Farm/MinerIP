@@ -17,7 +17,8 @@ $ProjectRoot    = Split-Path -Parent $PSScriptRoot
 $ExePath        = Join-Path $ProjectRoot "MinerIP.exe"
 $MetadataPath   = Join-Path $PSScriptRoot "metadata.json"
 $ZipPath        = Join-Path $ProjectRoot "MinerIP.zip"
-$WebsiteDownloads = Join-Path $ProjectRoot "..\HashrateWebsite\nextjs-app\public\downloads"
+# Set this to your local website downloads folder (not committed)
+$WebsiteDownloads = $env:MINERIP_WEBSITE_DOWNLOADS
 
 $SignTool       = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe"
 $DlibPath       = Join-Path $env:LOCALAPPDATA "Microsoft\MicrosoftTrustedSigningClientTools\Azure.CodeSigning.Dlib.dll"
@@ -117,12 +118,12 @@ Write-Host ""
 
 # --- Step 5: Copy to website ---
 Write-Host "[5/5] Copying to website downloads..." -ForegroundColor White
-if (Test-Path $WebsiteDownloads) {
+if ($WebsiteDownloads -and (Test-Path $WebsiteDownloads)) {
     Copy-Item $ZipPath (Join-Path $WebsiteDownloads "MinerIP.zip") -Force
     Write-Host "       Copied to: $WebsiteDownloads\MinerIP.zip" -ForegroundColor Green
 } else {
-    Write-Host "       Website downloads folder not found: $WebsiteDownloads" -ForegroundColor Yellow
-    Write-Host "       Copy MinerIP.zip manually." -ForegroundColor Yellow
+    Write-Host "       Set MINERIP_WEBSITE_DOWNLOADS env var to auto-copy." -ForegroundColor Yellow
+    Write-Host "       Otherwise, copy MinerIP.zip manually." -ForegroundColor Yellow
 }
 
 Write-Host ""
