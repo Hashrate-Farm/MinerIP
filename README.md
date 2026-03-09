@@ -2,7 +2,7 @@
 
 Lightweight Windows tool that scans your local network and finds all ASIC cryptocurrency miners (Antminer, Whatsminer, AvalonMiner, Bitaxe, IceRiver, Goldshell, Jasminer, VNish, and more).
 
-**Download:** [Latest Release](https://github.com/privacybtc/MinerIP/releases/latest)
+**Download:** [Latest Release](https://github.com/Hashrate-Farm/MinerIP/releases/latest)
 
 ## Features
 
@@ -53,10 +53,14 @@ go build -ldflags="-s -w" -o MinerIP.exe
 
 Because this is a new, unsigned executable, Windows SmartScreen may show a warning. Click **"More info"** → **"Run anyway"** to proceed. The source code is fully open for review.
 
+## Solo Mining?
+
+If you're solo mining with your ASICs, check out [**MySoloPool.com**](https://mysolopool.com) — a reliable solo mining pool supporting Bitcoin, Litecoin, Kaspa, and more. Find your miners with MinerIP, then point them to MySoloPool for the best solo mining experience.
+
 ## License
 
 MIT
 
 ## Credits
 
-Built by [Hashrate.Farm](https://www.hashrate.farm)
+Built by [Hashrate.Farm](https://www.hashrate.farm) | Solo mining? Try [MySoloPool.com](https://mysolopool.com)
