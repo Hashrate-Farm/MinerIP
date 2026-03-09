@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <title>MinerIP — ASIC Miner Network Scanner</title>
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg-card: #111118;
+      --bg-card-hover: #16161f;
+      --border: #1e1e2a;
+      --border-accent: #f59e0b33;
+      --text: #e4e4e7;
+      --text-muted: #71717a;
+      --primary: #f59e0b;
+      --primary-dim: #f59e0b22;
+      --accent: #d97706;
+      --green: #22c55e;
+      --green-dim: #22c55e22;
+      --red: #ef4444;
+      --cyan: #06b6d4;
+      --radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .header-logo svg {
+      width: 36px;
+      height: 36px;
+      color: var(--primary);
+    }
+
+    .header-logo span {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .header-logo .brand-primary { color: var(--primary); }
+    .header-logo .brand-white { color: #fff; }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .header h1 .gradient {
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+    }
+
+    /* Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="text"], input[type="number"] {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: var(--primary); }
+
+    input[type="number"] { width: 72px; text-align: center; }
+
+    .range-sep { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn svg { width: 18px; height: 18px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #000;
+    }
+
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .btn-danger {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-danger:hover { opacity: 0.9; }
+
+    .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+
+    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+    /* Progress */
+    .progress-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .progress-section.visible { display: block; }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .progress-stats strong { color: var(--text); }
+
+    /* Results */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .results-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-primary { background: var(--primary-dim); color: var(--primary); }
+    .badge-green { background: var(--green-dim); color: var(--green); }
+    .badge-muted { background: var(--border); color: var(--text-muted); }
+
+    /* Miner card */
+    .miner-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all 0.2s;
+    }
+
+    .miner-card:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+    }
+
+    .miner-card.identified {
+      border-left: 3px solid var(--primary);
+    }
+
+    .miner-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
+
+    .miner-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .miner-icon.identified { background: var(--primary-dim); color: var(--primary); }
+    .miner-icon.alive { background: var(--border); color: var(--text-muted); }
+
+    .miner-details { min-width: 0; }
+
+    .miner-ip {
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .miner-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 2px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .miner-brand {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .miner-actions { flex-shrink: 0; }
+
+    /* Ports badges */
+    .ports { display: flex; gap: 4px; flex-wrap: wrap; }
+
+    .port-badge {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    /* Supported brands */
+    .brands-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .brand-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--primary-dim);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 32px;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .footer a:hover { text-decoration: underline; }
+
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Bar -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
+          <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>
+        </svg>
+        <span style="font-size:1.2rem;font-weight:800;letter-spacing:-0.02em"><span style="color:var(--primary)">Miner</span><span style="color:#fff">IP</span></span>
+        <span style="color:var(--text-muted);font-size:0.8rem">by <a href="https://hashrate.farm" target="_blank" style="color:var(--primary);text-decoration:none">Hashrate.Farm</a></span>
+      </div>
+      <button class="btn btn-outline" onclick="shutdownApp()" style="padding:8px 16px;font-size:0.82rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+        Stop MinerIP
+      </button>
+    </div>
+
+    <!-- Header -->
+    <div class="header" style="padding-top:20px">
+      <h1>Miner<span class="gradient">IP</span> Scanner</h1>
+      <p>Find all ASIC miners on your local network. Full TCP port scanning with miner identification.</p>
+    </div>
+
+    <!-- Scan Config Card -->
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        Scan Configuration
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Your Local IP / Subnet</label>
+          <div class="input-row">
+            <input type="text" id="subnet" placeholder="e.g. 192.168.1.1" style="flex:1">
+            <button class="btn btn-outline btn-sm" id="detectBtn" onclick="detectIP()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              Auto Detect
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>IP Range</label>
+          <div class="input-row">
+            <input type="number" id="rangeStart" value="1" min="1" max="254">
+            <span class="range-sep">to</span>
+            <input type="number" id="rangeEnd" value="254" min="1" max="254">
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="scanBtn" onclick="startScan()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+          Start Scan
+        </button>
+        <button class="btn btn-danger" id="stopBtn" onclick="stopScan()" style="display:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+          Stop Scan
+        </button>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-section" id="progressSection">
+        <div class="progress-info">
+          <span id="progressPhase">Scanning...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-stats">
+          <span>Scanned: <strong id="statScanned">0</strong>/<strong id="statTotal">0</strong></span>
+          <span>Found: <strong id="statFound">0</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsSection" style="display:none">
+      <div class="results-header">
+        <h2>Discovered Devices (<span id="minerCount">0</span>)</h2>
+        <span class="badge badge-green" id="completeBadge" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Complete
+        </span>
+      </div>
+      <div id="minerList"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" style="display:none">
+      <div class="card">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <h3>No Miners Found</h3>
+          <p>No devices were detected on miner ports. Make sure your miners are powered on and connected to the same network.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supported brands -->
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+        Supported Brands
+      </div>
+      <div class="brands-grid">
+        <div class="brand-chip"><div class="brand-icon">A</div>Antminer</div>
+        <div class="brand-chip"><div class="brand-icon">W</div>Whatsminer</div>
+        <div class="brand-chip"><div class="brand-icon">I</div>IceRiver</div>
+        <div class="brand-chip"><div class="brand-icon">B</div>Bitaxe</div>
+        <div class="brand-chip"><div class="brand-icon">G</div>Goldshell</div>
+        <div class="brand-chip"><div class="brand-icon">V</div>VNish</div>
+        <div class="brand-chip"><div class="brand-icon">Br</div>Braiins OS+</div>
+        <div class="brand-chip"><div class="brand-icon">L</div>LuxOS</div>
+      </div>
+    </div>
+
+    <!-- Solo Pool Recommendation -->
+    <div style="margin-top:28px;background:linear-gradient(135deg,#1a1425 0%,#111118 50%,#0f1a1a 100%);border:1px solid #f59e0b22;border-radius:var(--radius);padding:24px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--primary)">Recommended</span>
+      </div>
+      <div style="font-size:1.3rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:6px">
+        <span style="color:#f59e0b">⛏</span> Solo Mine Bitcoin — Keep 100% of the Block Reward
+      </div>
+      <p style="color:var(--text-muted);font-size:0.88rem;max-width:560px;margin:0 auto 16px">
+        The most advanced Bitcoin solo mining pool. real-time stats, and instant block notifications. Hit a block and the entire 3.125 BTC reward is yours.
+      </p>
+      <a href="https://mysolopool.com" target="_blank" rel="noopener" class="btn btn-primary" style="padding:12px 28px;font-size:0.95rem">
+        Visit MySoloPool.com
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+
+    <div class="footer">
+      <p>MinerIP by <a href="https://hashrate.farm" target="_blank">Hashrate Farm</a> &middot; <a href="https://hashrate.farm/mining-hub/miner-scanner" target="_blank">hashrate.farm/mining-hub</a></p>
+    </div>
+  </div>
+
+  <script>
+    let polling = null;
+
+    async function detectIP() {
+      const btn = document.getElementById('detectBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Detecting...';
+      try {
+        const resp = await fetch('/api/detect-ip');
+        const data = await resp.json();
+        if (data.ip) {
+          document.getElementById('subnet').value = data.ip;
+        }
+      } catch (e) {
+        console.error('Detection failed', e);
+      }
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg> Auto Detect`;
+    }
+
+    async function startScan() {
+      const subnet = document.getElementById('subnet').value.trim();
+      if (!subnet) { alert('Please enter a subnet IP'); return; }
+
+      const rangeStart = parseInt(document.getElementById('rangeStart').value) || 1;
+      const rangeEnd = parseInt(document.getElementById('rangeEnd').value) || 254;
+
+      document.getElementById('scanBtn').style.display = 'none';
+      document.getElementById('stopBtn').style.display = 'inline-flex';
+      document.getElementById('progressSection').classList.add('visible');
+      document.getElementById('resultsSection').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('completeBadge').style.display = 'none';
+
+      try {
+        await fetch('/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subnet, rangeStart, rangeEnd })
+        });
+      } catch (e) {
+        console.error('Failed to start scan', e);
+      }
+
+      startPolling();
+    }
+
+    async function stopScan() {
+      try { await fetch('/api/stop', { method: 'POST' }); } catch {}
+      stopPolling();
+      document.getElementById('scanBtn').style.display = 'inline-flex';
+      document.getElementById('stopBtn').style.display = 'none';
+    }
+
+    function startPolling() {
+      stopPolling();
+      polling = setInterval(pollStatus, 800);
+      pollStatus();
+    }
+
+    function stopPolling() {
+      if (polling) { clearInterval(polling); polling = null; }
+    }
+
+    async function pollStatus() {
+      try {
+        const resp = await fetch('/api/status');
+        const data = await resp.json();
+        updateUI(data);
+        if (data.complete) {
+          stopPolling();
+          document.getElementById('scanBtn').style.display = 'inline-flex';
+          document.getElementById('stopBtn').style.display = 'none';
+          document.getElementById('completeBadge').style.display = 'inline-flex';
+          if (!data.miners || data.miners.length === 0) {
+            document.getElementById('emptyState').style.display = 'block';
+          }
+        }
+      } catch {}
+    }
+
+    function updateUI(data) {
+      const pct = data.total > 0 ? Math.round((data.scanned / data.total) * 100) : 0;
+      document.getElementById('progressPhase').textContent = data.phase || 'Scanning...';
+      document.getElementById('progressPercent').textContent = pct + '%';
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('statScanned').textContent = data.scanned || 0;
+      document.getElementById('statTotal').textContent = data.total || 0;
+      document.getElementById('statFound').textContent = data.found || 0;
+
+      if (data.miners && data.miners.length > 0) {
+        document.getElementById('resultsSection').style.display = 'block';
+        document.getElementById('minerCount').textContent = data.miners.length;
+        renderMiners(data.miners);
+      }
+    }
+
+    function renderMiners(miners) {
+      const list = document.getElementById('minerList');
+      list.innerHTML = miners.map(m => {
+        const isId = m.status === 'identified';
+        const portsHTML = (m.openPorts || []).map(p => `<span class="port-badge">${p}</span>`).join('');
+        const detailParts = [];
+        if (m.brand) detailParts.push(`<span class="miner-brand">${esc(m.brand)}</span>`);
+        if (m.model) detailParts.push(`Model: ${esc(m.model)}`);
+        detailParts.push(`${m.responseMs}ms`);
+        if (m.details) {
+          if (m.details.hashRate) detailParts.push(`HR: ${m.details.hashRate}`);
+          if (m.details.temp) detailParts.push(`Temp: ${m.details.temp}°C`);
+          if (m.details.power) detailParts.push(`${m.details.power}`);
+          if (m.details.fan) detailParts.push(`Fan: ${m.details.fan}`);
+          if (m.details.uptime) detailParts.push(`Up: ${m.details.uptime}`);
+          if (m.details.bestDiff) detailParts.push(`Best: ${m.details.bestDiff}`);
+          if (m.details.hwErrors) detailParts.push(`HW Err: ${m.details.hwErrors}`);
+        }
+
+        return `
+          <div class="miner-card ${isId ? 'identified' : ''}">
+            <div class="miner-info">
+              <div class="miner-icon ${isId ? 'identified' : 'alive'}">${isId ? (getBrandIcon(m.brand)) : '?'}</div>
+              <div class="miner-details">
+                <div class="miner-ip">${esc(m.ip)} <span class="ports">${portsHTML}</span></div>
+                <div class="miner-meta">${detailParts.join(' &middot; ')}</div>
+              </div>
+            </div>
+            <div class="miner-actions">
+              <a href="${esc(m.dashboardUrl || 'http://' + m.ip)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+                Open
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function getBrandIcon(brand) {
+      if (!brand) return '?';
+      const b = brand.toLowerCase();
+      if (b.includes('antminer') || b.includes('bitmain')) return 'A';
+      if (b.includes('whatsminer') || b.includes('microbt')) return 'W';
+      if (b.includes('iceriver')) return 'I';
+      if (b.includes('bitaxe')) return 'B';
+      if (b.includes('goldshell')) return 'G';
+      if (b.includes('vnish')) return 'V';
+      if (b.includes('braiins')) return 'Br';
+      if (b.includes('luxos')) return 'L';
+      if (b.includes('cgminer')) return 'C';
+      return '?';
+    }
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+
+    // Keepalive ping — tells the server the browser tab is still open
+    setInterval(() => { fetch('/api/ping').catch(() => {}); }, 30000);
+
+    // Shutdown the backend process
+    async function shutdownApp() {
+      if (!confirm('Stop MinerIP? This will close the scanner process.')) return;
+      try { await fetch('/api/shutdown', { method: 'POST' }); } catch {}
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#71717a;font-family:system-ui"><div style="text-align:center"><h2 style="color:#e4e4e7;margin-bottom:8px">MinerIP Stopped</h2><p>You can close this tab.</p></div></div>';
+    }
+
+    // Auto-detect IP on load
+    window.addEventListener('load', detectIP);
+  </script>
+</body>
+</html>
